@@ -4,6 +4,7 @@
 
 
 from simplesheet import *
+from simplesheet.formulas import Max
 
 
 if __name__ == "__main__":

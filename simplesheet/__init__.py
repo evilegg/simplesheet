@@ -212,7 +212,7 @@ class Mod(Expression):
         return self.left.get_dependencies().union(self.right.get_dependencies())
 
 
-class Function(Expression):
+class Formula(Expression):
     "Allow existing python methods to be used in an expression"
     def __init__(self, func, *args):
         self.func = func
@@ -227,7 +227,7 @@ class Function(Expression):
 
     def __str__(self):
         args_str = ', '.join(str(arg) for arg in self.args)
-        return f'Function({self.func.__name__}, {args_str})'
+        return f'Formula({self.func.__name__}, {args_str})'
 
     def get_dependencies(self):
         deps = set()
