@@ -236,19 +236,6 @@ class Function(Expression):
         return deps
 
 
-class Formula(Expression):
-    def __init__(self, expression):
-        self.expression = expression
-
-    def evaluate(self, context):
-        dependencies = set()
-        result = self.expression.evaluate(context, dependencies)
-        return result, dependencies
-
-    def __str__(self):
-        return str(self.expression)
-
-
 class Canvas(collections.UserDict):
     def evaluate(self, cell_name=None):
         # TODO evaluate only dirty cells (based on dependencies)

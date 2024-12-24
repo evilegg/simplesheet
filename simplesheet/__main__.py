@@ -16,20 +16,16 @@ if __name__ == "__main__":
     })
 
     # Create the formula x = a + (b + 1) * (6 / c)
-    ss['D1'] = Formula(
-        Add(
-            Cell('A1'),
-            Mul(
-                Add(Cell('B1'), Const(1)),
-                Div(Const(6), Cell('C1'))
-            )
+    ss['D1'] = Add(
+        Cell('A1'),
+        Mul(
+            Add(Cell('B1'), Const(1)),
+            Div(Const(6), Cell('C1'))
         )
     )
 
     # Example of using a built-in function (e.g., max)
-    ss['E1'] = Formula(
-        Function(max, Cell('A1'), Cell('B1'), Const(10))
-    )
+    ss['E1'] = Max(Cell('A1'), Cell('B1'), Const(10))
 
     # Evaluate the formula and get dependencies
     result = ss.evaluate('D1')
