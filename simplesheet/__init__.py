@@ -11,10 +11,10 @@ import collections
 class Expression:
     def evaluate(self, context, dependencies=None):
         "Compute the value of this Expression"
-        raise NotImplementedError("Subclasses should implement this!")
+        raise NotImplementedError('Subclasses should implement this!')
 
     def __str__(self):
-        raise NotImplementedError("Subclasses should implement this!")
+        raise NotImplementedError('Subclasses should implement this!')
 
     def get_dependencies(self):
         "Return the dependencies of this expression for change propagation"
@@ -227,7 +227,7 @@ class Formula(Expression):
 
     def __str__(self):
         args_str = ', '.join(str(arg) for arg in self.args)
-        return f'Formula({self.func.__name__}, {args_str})'
+        return f'{self.__class__.__name__}({args_str})'
 
     def get_dependencies(self):
         deps = set()

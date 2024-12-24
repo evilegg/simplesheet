@@ -4,7 +4,7 @@
 
 
 from simplesheet import *
-from simplesheet.formulas import Max
+from simplesheet.formulas import Max, Min, Sum
 
 
 if __name__ == "__main__":
@@ -39,15 +39,17 @@ if __name__ == "__main__":
     print('Evaluated Result:', result)
     print('Dependencies:', dependencies)
 
-    # Evaluate the max formula and get dependencies
-    max_result = ss.evaluate('E1')
-    max_dependencies = ss.get_dependencies('E1')
-
     # Print the max formula, its evaluated result, and dependencies
     print()
     print('Max Formula:', ss['E1'])
-    print('Max Evaluated Result:', max_result)
-    print('Max Dependencies:', max_dependencies)
+    print('Max Evaluated Result:', ss.evaluate('E1'))
+    print('Max Dependencies:', ss.get_dependencies('E1'))
+    print()
+    print('Sum Formula:', Sum(Cell('A1'), Cell('B1'), Const(10)))
+    print('Sum Value:', Sum(Cell('A1'), Cell('B1'), Const(10)).evaluate(ss))
+    print()
+    print('Min Formula:', Min(Cell('A1'), Cell('B1'), Const(10)))
+    print('Min Value:', Min(Cell('A1'), Cell('B1'), Const(10)).evaluate(ss))
 
     # Example of operator overloads to create a Formula
     ss['F1'] = Cell('A1') + (Cell('B1') + Const(1)) * (Const(6) / Cell('C1'))
