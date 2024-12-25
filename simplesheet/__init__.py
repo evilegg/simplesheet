@@ -6,6 +6,7 @@ Encapsulate spreadsheet-like functions as native Python Objects.
 
 
 import collections
+import re
 
 
 class Expression:
@@ -74,6 +75,22 @@ class Const(Expression):
 
     def get_dependencies(self):
         return set()
+
+
+class Assignment(Expression):
+    def __init__(self, cell_name, expression):
+        self.cell_name = cell_name
+        self.expression = expression
+
+    def evaluate(self, context, dependencies=None):
+        context[self.cell_name] = self.expression
+        return self.expression.evaluate(context, dependencies)
+
+    def __str__(self):
+        return f'{self.__class__.__name__}({self.cell_name}, {self.expression})'
+
+    def get_dependencies(self):
+        return self.expression.get_dependencies()
 
 
 class Add(Expression):
@@ -256,3 +273,63 @@ class Canvas(collections.UserDict):
             retval[key] = val.get_dependencies() if isinstance(val, Expression) else val
         return retval
 
+    def parse(self, s_expression):
+        # This regex matches parentheses and symbols/numbers
+        tokens = list(re.findall(r'\(|\)|[^\s()]+', s_expression))
+
+        if not tokens:
+            raise SyntaxError('Unexpected EOF')
+
+        expression = self._build_expression_tree(tokens)
+        if isinstance(expression, Assignment):
+            self[expression.cell_name] = expression.expression
+
+        return expression
+
+
+    def _build_expression_tree(self, tokens):
+        if not tokens:
+            raise SyntaxError('Unexpected EOF')
+
+        token = tokens.pop(0)
+
+        if token == '(':
+            operator = tokens.pop(0)  # Get the operator
+
+            if operator == '=':
+                # special case the assignment operator
+                # maybe it should return the value that was assigned?
+                cell_name = tokens.pop(0)
+                expression = self._build_expression_tree(tokens)
+                tokens.pop(0)
+                return Assignment(cell_name, expression)
+
+            operands = []
+            while tokens[0] != ')':
+                operands.append(self._build_expression_tree(tokens))
+
+            # Remove the closing parenthesis
+            tokens.pop(0)
+
+            # Create the appropriate expression based on the operator
+            if operator == '+':
+                return Add(*operands)
+            elif operator == '-':
+                return Sub(*operands)
+            elif operator == '*':
+                return Mul(*operands)
+            elif operator == '/':
+                return Div(*operands)
+            elif operator == '%':
+                return Mod(*operands)
+            elif operator == '//':
+                return FloorDiv(*operands)
+            elif operator == '**':
+                return Pow(*operands)
+            else:
+                raise SyntaxError(f'Unknown operator: {operator}')
+
+        elif re.match(r'^\d+$', token):  # Check if it's a number
+            return Const(int(token))
+        else:  # Otherwise, it must be a cell
+            return Cell(token)

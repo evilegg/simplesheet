@@ -68,3 +68,18 @@ if __name__ == "__main__":
     print('Evaluated Spreadsheet:', ss.evaluate())
     print('Computed Dependencies:', ss.get_dependencies())
 
+    # Read from a string
+    formula_string = '(+ A1 (* (+ B1 1) (/ 6 C1)))'
+    print()
+    print('Evaluate this string:', formula_string)
+    print('Formula:', ss.parse(formula_string))
+    print('Value:', ss.parse(formula_string).evaluate(ss))
+
+    # Assignment from a string
+    formula_string_with_assignment = '(= X1 (+ A1 (* (+ B1 1) (/ 6 C1))))'
+    ss.parse(formula_string_with_assignment)
+    print()
+    print('Evaluate this string:', formula_string_with_assignment)
+    print('Parsed:', ss['X1'])
+    print('Value:', ss.evaluate('X1'))
+
